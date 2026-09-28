@@ -1,0 +1,23 @@
+services:
+  frontend:
+    build: ./frontend
+    ports: ["3000:80"]
+    depends_on: [backend]
+  backend:
+    build: ./backend
+    ports: ["8000:8000"]
+    environment:
+      DATABASE_URL: postgresql://skyguard:skyguard@postgres:5432/skyguard
+    depends_on: [postgres]
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: skyguard
+      POSTGRES_PASSWORD: skyguard
+      POSTGRES_DB: skyguard
+    ports: ["5432:5432"]
+    volumes:
+      - skyguard_pg:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+volumes:
+  skyguard_pg:
